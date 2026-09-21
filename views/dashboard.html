@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hostel Management System</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="brand-icon small">H</div>
+      <div>
+        <strong>HostelMS</strong>
+        <span>Admin Panel</span>
+      </div>
+    </div>
+
+    <nav>
+      <button class="nav-item active" data-section="dashboard">Dashboard</button>
+      <button class="nav-item" data-section="students">Students</button>
+      <button class="nav-item" data-section="rooms">Rooms</button>
+      <button class="nav-item" data-section="payments">Payments</button>
+      <button class="nav-item" data-section="reports">Reports</button>
+    </nav>
+
+    <button id="logoutBtn" class="logout">Logout</button>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h2 id="pageTitle">Dashboard</h2>
+        <p id="pageSubtitle">Overview of hostel operations</p>
+      </div>
+      <div class="admin-pill">Admin</div>
+    </header>
+
+    <div id="toast"></div>
+
+    <section id="dashboard" class="section active">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div><span>Active Students</span><strong id="statStudents">0</strong></div>
+          <div class="stat-icon">👨‍🎓</div>
+        </div>
+        <div class="stat-card">
+          <div><span>Total Rooms</span><strong id="statRooms">0</strong></div>
+          <div class="stat-icon">🏠</div>
+        </div>
+        <div class="stat-card">
+          <div><span>Occupied Beds</span><strong id="statOccupied">0</strong></div>
+          <div class="stat-icon">🛏️</div>
+        </div>
+        <div class="stat-card">
+          <div><span>Available Beds</span><strong id="statAvailable">0</strong></div>
+          <div class="stat-icon">✅</div>
+        </div>
+        <div class="stat-card">
+          <div><span>Total Collection</span><strong id="statRevenue">₹0</strong></div>
+          <div class="stat-icon">₹</div>
+        </div>
+      </div>
+
+      <div class="content-grid">
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Room Occupancy</h3>
+            <button class="btn small" onclick="showSection('rooms')">Manage Rooms</button>
+          </div>
+          <div id="roomOverview" class="room-overview"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Quick Actions</h3>
+          </div>
+          <div class="quick-actions">
+            <button onclick="openStudentModal()">+ Add Student</button>
+            <button onclick="openRoomModal()">+ Add Room</button>
+            <button onclick="openPaymentModal()">+ Record Payment</button>
+            <button onclick="showSection('reports')">View Reports</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="students" class="section">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>Student Records</h3>
+            <p class="muted">Add, update, search and remove hostel residents.</p>
+          </div>
+          <button class="btn primary" onclick="openStudentModal()">+ Add Student</button>
+        </div>
+        <div class="toolbar">
+          <input id="studentSearch" placeholder="Search by name, ID or course..." oninput="loadStudents()">
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Student ID</th><th>Name</th><th>Course</th><th>Year</th><th>Room</th><th>Phone</th><th>Status</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="studentsTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="rooms" class="section">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>Room Allocation</h3>
+            <p class="muted">Manage room capacity and occupancy.</p>
+          </div>
+          <button class="btn primary" onclick="openRoomModal()">+ Add Room</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Room</th><th>Floor</th><th>Capacity</th><th>Occupied</th><th>Available</th><th>Status</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="roomsTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="payments" class="section">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>Payment Records</h3>
+            <p class="muted">Track hostel fee payments and transaction references.</p>
+          </div>
+          <button class="btn primary" onclick="openPaymentModal()">+ Record Payment</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Date</th><th>Student ID</th><th>Student</th><th>Amount</th><th>Type</th><th>Reference</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="paymentsTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="reports" class="section">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>Reports</h3>
+            <p class="muted">Generate and print student and payment reports.</p>
+          </div>
+          <div class="button-group">
+            <button class="btn" onclick="printReport('student')">Print Student Report</button>
+            <button class="btn" onclick="printReport('payment')">Print Payment Report</button>
+          </div>
+        </div>
+
+        <div class="report-cards">
+          <div class="report-card"><span>Total Capacity</span><strong id="reportCapacity">0</strong></div>
+          <div class="report-card"><span>Occupied Beds</span><strong id="reportOccupied">0</strong></div>
+          <div class="report-card"><span>Available Beds</span><strong id="reportAvailable">0</strong></div>
+          <div class="report-card"><span>Revenue</span><strong id="reportRevenue">₹0</strong></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Student ID</th><th>Name</th><th>Course</th><th>Year</th><th>Room</th><th>Admission</th><th>Status</th></tr></thead>
+            <tbody id="reportStudentsTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Student Modal -->
+  <div id="studentModal" class="modal">
+    <div class="modal-box large">
+      <div class="modal-head"><h3 id="studentModalTitle">Add Student</h3><button onclick="closeModal('studentModal')">×</button></div>
+      <form id="studentForm">
+        <input type="hidden" id="studentDbId">
+        <div class="form-grid">
+          <div><label>Student ID *</label><input id="studentId" required></div>
+          <div><label>Full Name *</label><input id="studentName" required></div>
+          <div><label>Email</label><input id="studentEmail" type="email"></div>
+          <div><label>Phone</label><input id="studentPhone"></div>
+          <div><label>Course</label><input id="studentCourse" placeholder="B.Tech CSE"></div>
+          <div><label>Year</label><select id="studentYear"><option value="">Select</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+          <div><label>Guardian Name</label><input id="guardianName"></div>
+          <div><label>Guardian Phone</label><input id="guardianPhone"></div>
+          <div><label>Room</label><select id="studentRoom"></select></div>
+          <div><label>Admission Date *</label><input id="admissionDate" type="date" required></div>
+          <div><label>Status</label><select id="studentStatus"><option>Active</option><option>Inactive</option></select></div>
+        </div>
+        <div class="modal-actions"><button type="button" class="btn" onclick="closeModal('studentModal')">Cancel</button><button class="btn primary">Save Student</button></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Room Modal -->
+  <div id="roomModal" class="modal">
+    <div class="modal-box">
+      <div class="modal-head"><h3 id="roomModalTitle">Add Room</h3><button onclick="closeModal('roomModal')">×</button></div>
+      <form id="roomForm">
+        <input type="hidden" id="roomDbId">
+        <label>Room Number *</label><input id="roomNumber" placeholder="A-104" required>
+        <label>Capacity *</label><input id="roomCapacity" type="number" min="1" max="20" required>
+        <label>Floor *</label><input id="roomFloor" type="number" min="1" required>
+        <div class="modal-actions"><button type="button" class="btn" onclick="closeModal('roomModal')">Cancel</button><button class="btn primary">Save Room</button></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Payment Modal -->
+  <div id="paymentModal" class="modal">
+    <div class="modal-box">
+      <div class="modal-head"><h3>Record Payment</h3><button onclick="closeModal('paymentModal')">×</button></div>
+      <form id="paymentForm">
+        <label>Student *</label><select id="paymentStudent" required></select>
+        <label>Amount (₹) *</label><input id="paymentAmount" type="number" min="1" step="0.01" required>
+        <label>Payment Date *</label><input id="paymentDate" type="date" required>
+        <label>Payment Type</label><select id="paymentType"><option>Hostel Fee</option><option>Mess Fee</option><option>Late Fee</option><option>Other</option></select>
+        <label>Transaction Reference</label><input id="transactionRef" placeholder="TXN12345">
+        <div class="modal-actions"><button type="button" class="btn" onclick="closeModal('paymentModal')">Cancel</button><button class="btn primary">Save Payment</button></div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hostel Management System - Login</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="login-page">
+  <div class="login-card">
+    <div class="brand-icon">H</div>
+    <h1>Hostel Management System</h1>
+    <p class="muted">Admin Portal</p>
+
+    <form id="loginForm">
+      <label>Username</label>
+      <input id="username" value="admin" required>
+
+      <label>Password</label>
+      <input id="password" type="password" value="admin123" required>
+
+      <button class="btn primary full" type="submit">Login</button>
+    </form>
+
+    <div id="loginMessage" class="message"></div>
+    <p class="demo-note">Demo login: <b>admin</b> / <b>admin123</b></p>
+  </div>
+
+  <script src="/js/login.js"></script>
+</body>
+</html>
